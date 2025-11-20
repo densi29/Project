@@ -1,0 +1,230 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MD5 Algorithm — Blog & Demos</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#6ee7b7;--muted:#94a3b8;--glass:rgba(255,255,255,0.04)}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial; background:linear-gradient(180deg,#071029 0%, #081426 60%); color:#e6eef8}
+    header{display:flex;align-items:center;gap:16px;padding:22px;}
+    .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#60a5fa);display:flex;align-items:center;justify-content:center;font-weight:700;color:#06202b}
+    .title h1{margin:0;font-size:clamp(18px,2.4vw,28px)}
+    .title p{margin:0;color:var(--muted);font-size:13px}main{display:grid;grid-template-columns:360px 1fr;gap:20px;padding:20px}
+.sidebar{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+.content{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); border-radius:12px;padding:18px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+h2{color:var(--accent);margin-top:0}
+pre{background:var(--glass);padding:12px;border-radius:8px;overflow:auto;color:#dffcf0}
+
+/* interactive area */
+.demo{display:grid;grid-template-columns:1fr 360px;gap:12px}
+.card{background:rgba(255,255,255,0.02);padding:14px;border-radius:10px}
+
+/* removed animations, simple static container */
+.vis-wrap{
+  height:120px;
+  background:rgba(255,255,255,0.02);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:8px;
+  position:relative;
+}
+
+/* input UI */
+.controls{display:flex;gap:8px;margin-top:12px}
+input[type=text]{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);background:transparent;color:inherit}
+button{padding:8px 12px;border-radius:8px;border:0;background:var(--accent);color:#022;cursor:pointer}
+.muted{color:var(--muted);font-size:13px}
+
+/* responsive */
+@media (max-width:920px){main{grid-template-columns:1fr;}}
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo"></div>
+    <div class="title">
+      <h1>Study of MD5 Algorithm</h1>
+      <p class="muted">A compact blog with interactive demo, animation & code examples (Java + Python)</p>
+    </div>
+  </header>
+
+  <main>
+    <aside class="sidebar">
+      <h3>Contents</h3>
+      <ol>
+        <li>What is MD5?</li>
+        <li>How MD5 works — steps</li>
+        <li>Interactive demo (JS)</li>
+        <li>Reference Java implementation</li>
+        <li>Reference Python usage</li>
+        <li>Security notes</li>
+      </ol>
+      <hr />
+      <p class="muted">Tip: Try the MD5 demo to see how input text maps to a 128-bit digest.</p>
+    </aside>
+
+<section class="content">
+  <h2>What is MD5?</h2>
+  <p>
+    MD5 (Message Digest Algorithm 5) is a widely known cryptographic hash function that produces a
+    128-bit (16-byte) digest. It was designed by Ronald Rivest in 1991 and processes variable-length
+    input into a fixed-size output. MD5 is fast and simple, historically used in many applications,
+    but is no longer secure for modern cryptography.
+  </p>
+
+  <h2>How MD5 works — simplified steps</h2>
+  <ol>
+    <li>Pre-processing (padding): append one '1' bit, then enough '0' bits to reach length ≡ 448 mod 512, then append 64-bit message length.</li>
+    <li>Initialize buffer values: A, B, C, D with fixed constants.</li>
+    <li>Process message in 512-bit blocks across four rounds of nonlinear functions and rotations.</li>
+    <li>Output the final concatenation A || B || C || D (little-endian) as a 128-bit digest.</li>
+  </ol>
+
+  <h2>Interactive MD5 Demo</h2>
+  <div class="demo card">
+    <div>
+      <div class="vis-wrap" id="vis">
+        <span class="muted">Enter text below to compute MD5</span>
+      </div>
+
+      <div class="controls">
+        <input id="inputText" type="text" value="hello" />
+        <button id="go">Compute MD5</button>
+      </div>
+
+      <div style="margin-top:12px;">
+        <div class="muted">Digest (hex):</div>
+        <pre id="digest">--</pre>
+      </div>
+    </div>
+
+    <aside style="padding-left:12px">
+      <!-- intentionally left blank -->
+    </aside>
+  </div>
+
+  <h2>Java example</h2>
+  <p class="muted">Simple Java program using MessageDigest.</p>
+  <pre id="javaCode">// MD5Example.java
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+public class MD5Example {
+  public static String md5(String input) throws NoSuchAlgorithmException {
+    MessageDigest md = MessageDigest.getInstance("MD5");
+    byte[] digest = md.digest(input.getBytes());
+    StringBuilder sb = new StringBuilder();
+    for (byte b : digest) sb.append(String.format("%02x", b & 0xff));
+    return sb.toString();
+  }
+
+  public static void main(String[] args) throws Exception {
+    String text = "hello";
+    System.out.println("MD5(\"" + text + "\") = " + md5(text));
+  }
+}</pre>
+
+<h2>Python example</h2>
+  <p class="muted">Python hashlib MD5 example.</p>
+  <pre id="pyCode"># md5_example.py
+
+import hashlib
+
+text = b"hello"
+print(hashlib.md5(text).hexdigest())</pre>
+
+<h2>Security Notes</h2>
+  <ul>
+    <li>MD5 is broken for collision resistance.</li>
+    <li>Do not use MD5 for password hashing or digital signatures.</li>
+    <li>Use SHA-256, SHA-3, bcrypt, scrypt, or Argon2 instead.</li>
+  </ul>
+
+  <hr />
+  <p class="muted">This page includes a simple JavaScript MD5 implementation for learning use only.</p>
+</section>
+
+  </main>
+
+<script>
+    // Minimal JS MD5 + WebCrypto fallback
+    async function md5Hex(msg) {
+      if (window.crypto && window.crypto.subtle && window.TextEncoder) {
+        try {
+          const enc = new TextEncoder();
+          const data = enc.encode(msg);
+          const hash = await crypto.subtle.digest('MD5', data);
+          const arr = Array.from(new Uint8Array(hash));
+          return arr.map(b => b.toString(16).padStart(2,'0')).join('');
+        } catch (e) {}
+      }
+      return jsMD5(msg);
+    }
+
+    function rotl(x,c){return (x<<c)|(x>>>(32-c));}
+    function toHexLE(n){return ('00000000'+(n>>>0).toString(16)).slice(-8).match(/../g).reverse().join('');}
+
+    function jsMD5(str){
+      const msg = new TextEncoder().encode(str);
+      const ml = msg.length * 8;
+      const padLen = ((56 - (msg.length + 1) % 64) + 64) % 64;
+      const buffer = new Uint8Array(msg.length + 1 + padLen + 8);
+
+      buffer.set(msg,0);
+      buffer[msg.length] = 0x80;
+
+      for (let i=0;i<8;i++) buffer[buffer.length-8+i] = (ml >>> (8*i)) & 0xff;
+
+      let A=0x67452301, B=0xefcdab89, C=0x98badcfe, D=0x10325476;
+
+      const K = new Uint32Array(64);
+      for (let i=0;i<64;i++) K[i] = Math.floor(Math.abs(Math.sin(i+1)) * 2**32)>>>0;
+
+      const s = [7,12,17,22,7,12,17,22,7,12,17,22,7,12,17,22,
+                 5,9,14,20,5,9,14,20,5,9,14,20,5,9,14,20,
+                 4,11,16,23,4,11,16,23,4,11,16,23,4,11,16,23,
+                 6,10,15,21,6,10,15,21,6,10,15,21,6,10,15,21];
+
+      for (let i=0;i<buffer.length;i+=64){
+        const M = new Uint32Array(16);
+        for (let j=0;j<16;j++){
+          const base = i + j*4;
+          M[j] = buffer[base] | (buffer[base+1]<<8) | (buffer[base+2]<<16) | (buffer[base+3]<<24);
+        }
+        let a=A, b=B, c=C, d=D;
+        for (let j=0;j<64;j++){
+          let f,g;
+          if (j<16){f=(b&c)|((~b)&d); g=j;}
+          else if (j<32){f=(d&b)|((~d)&c); g=(5*j+1)%16;}
+          else if (j<48){f=b^c^d; g=(3*j+5)%16;}
+          else{f=c^(b|(~d)); g=(7*j)%16;}
+          const temp=d;
+          d=c; c=b;
+          b = (b + rotl((a + f + K[j] + M[g])>>>0, s[j]))>>>0;
+          a=temp;
+        }
+        A=(A+a)>>>0; B=(B+b)>>>0; C=(C+c)>>>0; D=(D+d)>>>0;
+      }
+      return toHexLE(A)+toHexLE(B)+toHexLE(C)+toHexLE(D);
+    }
+
+    const btn = document.getElementById('go');
+    const input = document.getElementById('inputText');
+    const digestEl = document.getElementById('digest');
+
+    btn.addEventListener('click', async ()=>{
+      digestEl.textContent = "computing...";
+      digestEl.textContent = await md5Hex(input.value);
+    });
+
+    (async ()=>{ digestEl.textContent = await md5Hex(input.value); })();
+</script>
+
+</body>
+</html>
